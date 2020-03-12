@@ -1,4 +1,3 @@
-#define F_CPU 8000000UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <util/delay.h>
@@ -77,6 +76,7 @@ void check_win(void) {
     	p1_wins = p1_wins + 1;
     	win = 1;
     	reset_variables();
+		return;
 	}
 	else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 	        (tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
@@ -84,6 +84,7 @@ void check_win(void) {
     	p2_wins = p2_wins + 1;
     	win = 1;
     	reset_variables();
+		return;
 	}
 }
 
@@ -363,16 +364,13 @@ int main(void)
 
 	while(1){
 		Cursor();
+
+		if (win) {win = 0; cstate = start;}
+
 		sprintf(buffer, "Player 1: %d     Player 2: %d     ", p1_wins,p2_wins);
 		LCD_DisplayString(1, buffer);
-
-		if (win && press) {
-			cstate = start;
-			win = 0;
-		}
-		
-		while (!TimerFlag) {};    // Wait 300ms
-		TimerFlag = 0;
+		/*while (!TimerFlag) {};    // Wait 300ms
+		TimerFlag = 0; */
 	}
 	return 1;
 }

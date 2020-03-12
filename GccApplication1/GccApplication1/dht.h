@@ -1,7 +1,7 @@
 #ifndef _DHT_h
 #define _DHT_h
 
-#define F_CPU 8000000UL
+//#define F_CPU 8000000UL
 
 #define DHT_PORT_OUT PORTB
 #define DHT_PORT_IN PINB

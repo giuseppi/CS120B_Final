@@ -47,7 +47,7 @@
       <ToolOptions>
         <InterfaceProperties>
           <JtagDbgClock>300000</JtagDbgClock>
-          <IspClock>1000000</IspClock>
+          <IspClock>972169</IspClock>
         </InterfaceProperties>
         <InterfaceName>ISP</InterfaceName>
       </ToolOptions>
@@ -56,7 +56,7 @@
       <ToolName>Atmel-ICE</ToolName>
     </com_atmel_avrdbg_tool_atmelice>
     <avrtoolinterface>ISP</avrtoolinterface>
-    <avrtoolinterfaceclock>1000000</avrtoolinterfaceclock>
+    <avrtoolinterfaceclock>972169</avrtoolinterfaceclock>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>

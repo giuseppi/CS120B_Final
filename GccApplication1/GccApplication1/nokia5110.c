@@ -241,6 +241,11 @@ void nokia_lcd_1win(void) {
 		nokia_lcd_set_cursor(0, 20);
 		nokia_lcd_write_string("Wins!", 3);
 		nokia_lcd_render();
+
+		delay_ms(3000);
+		nokia_lcd_clear();
+		nokia_lcd_grid();
+
 }
 
 void nokia_lcd_2win(void) {
@@ -250,6 +255,12 @@ void nokia_lcd_2win(void) {
 	nokia_lcd_set_cursor(0, 20);
 	nokia_lcd_write_string("Wins!", 3);
 	nokia_lcd_render();
+	
+	delay_ms(3000);
+	nokia_lcd_clear();
+	nokia_lcd_grid();
+
+	return;
 }
 
 void nokia_lcd_display_cursor(uint8_t x, uint8_t y) {
@@ -257,4 +268,5 @@ void nokia_lcd_display_cursor(uint8_t x, uint8_t y) {
 	nokia_lcd_set_cursor(x, y);
 	nokia_lcd_write_string("-",1);
 	nokia_lcd_render();
+	return;
 }
