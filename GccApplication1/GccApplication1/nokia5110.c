@@ -188,3 +188,37 @@ void nokia_lcd_render(void)
 	for (i = 0; i < 504; i++)
 		write_data(nokia_lcd.screen[i]);
 }
+
+void nokia_lcd_grid(void) {
+	nokia_lcd_set_cursor(0, 10);
+	nokia_lcd_write_string("--------------",1);
+	
+	nokia_lcd_set_cursor(0, 27);
+	nokia_lcd_write_string("--------------",1);
+}
+
+void nokia_lcd_clear_cursors(void)
+{
+	nokia_lcd_set_cursor(13, 7);
+	nokia_lcd_write_string(" ", 1);
+	nokia_lcd_set_cursor(13, 24);
+	nokia_lcd_write_string(" ", 1);
+	nokia_lcd_set_cursor(13, 41);
+	nokia_lcd_write_string(" ", 1);
+	
+	nokia_lcd_set_cursor(40, 7);
+	nokia_lcd_write_string(" ", 1);
+	nokia_lcd_set_cursor(40, 24);
+	nokia_lcd_write_string(" ", 1);
+	nokia_lcd_set_cursor(40, 41);
+	nokia_lcd_write_string(" ", 1);
+	
+	nokia_lcd_set_cursor(67, 7);
+	nokia_lcd_write_string(" ", 1);
+	nokia_lcd_set_cursor(67, 24);
+	nokia_lcd_write_string(" ", 1);
+	nokia_lcd_set_cursor(67, 41);
+	nokia_lcd_write_string(" ", 1);
+	
+	nokia_lcd_render();
+}

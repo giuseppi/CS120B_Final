@@ -72,5 +72,14 @@ void nokia_lcd_set_cursor(uint8_t x, uint8_t y);
  */
 void nokia_lcd_render(void);
 
+/*
+ * Set grid
+ */
+void nokia_lcd_grid(void);
+
+/*
+ * Clear cursors
+ */
+void nokia_lcd_clear_cursors(void);
 
 #endif

@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include "dht.h"
 
-enum States{start, TL, TM, TR, ML, MM, MR, BL, BM, BR} state;
-
 volatile unsigned char TimerFlag = 0;
 unsigned long _avr_timer_M = 1;
 unsigned long _avr_timer_cntcurr = 0;
@@ -56,178 +54,236 @@ int ADC_Read(char channel)
 	return ADC_value;        // return digital value
 }
 
+enum Cursor_States{start, TL, TM, TR, ML, MM, MR, BL, BM, BR} cstate;
+
+int cnt = 0;
+
 void Cursor() {
 	int ADC_Value1;
 	int ADC_Value2;
+	unsigned press = ~PINA & 0x04;
 	
 	ADC_Value1 = ADC_Read(0);/* Read the status on X-OUT pin using channel 0 */
 	ADC_Value2 = ADC_Read(1);/* Read the status on Y-OUT pin using channel 0 */
 	
-	switch(state) { // Transitions
+	switch(cstate) { // Transition Actions
 		case start:
-			state = TL;
+			cstate = TL;
 			break;
 		case TL:
-			
-			if (ADC_Value1 > 700) {state = TM;}
-			else if (ADC_Value2 < 250) {state = ML;}
-			else if (ADC_Value2 > 700) {state = TL;}
-			else if (ADC_Value1 < 300) {state = TL;}
-			else {state = TL;}
-		break;
+			if (press) {
+				nokia_lcd_set_cursor(13, 0);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = TM;}
+			else if (ADC_Value2 < 250) {cstate = ML;}
+			else if (ADC_Value2 > 700) {cstate = TL;}
+			else if (ADC_Value1 < 300) {cstate = TL;}
+			else {cstate = TL;}
+			break;
 		case TM:
-			if (ADC_Value1 > 700) {state = TR;}
-			else if (ADC_Value2 < 250) {state = MM;}
-			else if (ADC_Value2 > 700) {state = TM;}
-			else if (ADC_Value1 < 300) {state = TL;}
-			else {state = TM;}
-		break;
+			if (press) {
+				nokia_lcd_set_cursor(40, 0);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = TR;}
+			else if (ADC_Value2 < 250) {cstate = MM;}
+			else if (ADC_Value2 > 700) {cstate = TM;}
+			else if (ADC_Value1 < 300) {cstate = TL;}
+			else {cstate = TM;}
+			break;
 		case TR:
-			if (ADC_Value1 > 700) {state = TR;}
-			else if (ADC_Value2 < 250) {state = MR;}
-			else if (ADC_Value2 > 700) {state = TR;}
-			else if (ADC_Value1 < 300) {state = TM;}
-			else {state = TR;}
-		break;
+			if (press) {
+				nokia_lcd_set_cursor(67, 0);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = TR;}
+			else if (ADC_Value2 < 250) {cstate = MR;}
+			else if (ADC_Value2 > 700) {cstate = TR;}
+			else if (ADC_Value1 < 300) {cstate = TM;}
+			else {cstate = TR;}
+			break;
 		case ML:
-			if (ADC_Value1 > 700) {state = MM;}
-			else if (ADC_Value2 < 250) {state = BL;}
-			else if (ADC_Value2 > 700) {state = TL;}
-			else if (ADC_Value1 < 300) {state = ML;}
-			else {state = ML;}
-		break;
+			if (press) {
+				nokia_lcd_set_cursor(13, 17);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = MM;}
+			else if (ADC_Value2 < 250) {cstate = BL;}
+			else if (ADC_Value2 > 700) {cstate = TL;}
+			else if (ADC_Value1 < 300) {cstate = ML;}
+			else {cstate = ML;}
+			break;
 		case MM:
-			if (ADC_Value1 > 700) {state = MR;}
-			else if (ADC_Value2 < 250) {state = BM;}
-			else if (ADC_Value2 > 700) {state = TM;}
-			else if (ADC_Value1 < 300) {state = ML;}
-			else {state = MM;}
-		break;
+			if (press) {
+				nokia_lcd_set_cursor(40, 17);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = MR;}
+			else if (ADC_Value2 < 250) {cstate = BM;}
+			else if (ADC_Value2 > 700) {cstate = TM;}
+			else if (ADC_Value1 < 300) {cstate = ML;}
+			else {cstate = MM;}
+			break;
 		case MR:
-			if (ADC_Value1 > 700) {state = MR;}
-			else if (ADC_Value2 < 250) {state = BR;}
-			else if (ADC_Value2 > 700) {state = TR;}
-			else if (ADC_Value1 < 300) {state = MM;}
-			else {state = MR;}
-		break;
+			if (press) {
+				nokia_lcd_set_cursor(67, 17);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = MR;}
+			else if (ADC_Value2 < 250) {cstate = BR;}
+			else if (ADC_Value2 > 700) {cstate = TR;}
+			else if (ADC_Value1 < 300) {cstate = MM;}
+			else {cstate = MR;}
+			break;
 		case BL:
-			if (ADC_Value1 > 700) {state = BM;}
-			else if (ADC_Value2 < 250) {state = BL;}
-			else if (ADC_Value2 > 700) {state = ML;}
-			else if (ADC_Value1 < 300) {state = BL;}
-			else {state = BL;}
-		break;
+			if (press) {
+				nokia_lcd_set_cursor(13, 34);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = BM;}
+			else if (ADC_Value2 < 250) {cstate = BL;}
+			else if (ADC_Value2 > 700) {cstate = ML;}
+			else if (ADC_Value1 < 300) {cstate = BL;}
+			else {cstate = BL;}
+			break;
 		case BM:
-			if (ADC_Value1 > 700) {state = BR;}
-			else if (ADC_Value2 < 250) {state = BM;}
-			else if (ADC_Value2 > 700) {state = MM;}
-			else if (ADC_Value1 < 300) {state = BL;}
-			else {state = BM;}
-		break;
+			if (press) {
+				nokia_lcd_set_cursor(40, 34);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = BR;}
+			else if (ADC_Value2 < 250) {cstate = BM;}
+			else if (ADC_Value2 > 700) {cstate = MM;}
+			else if (ADC_Value1 < 300) {cstate = BL;}
+			else {cstate = BM;}
+			break;
 		case BR:
-			if (ADC_Value1 > 700) {state = BR;}
-			else if (ADC_Value2 < 250) {state = BR;}
-			else if (ADC_Value2 > 700) {state = MR;}
-			else if (ADC_Value1 < 300) {state = BM;}
-			else {state = BR;}
+			if (press) {
+				nokia_lcd_set_cursor(67, 34);
+				if ((cnt % 2) == 0) {
+					nokia_lcd_write_string("x",1);
+				}
+				else {
+					nokia_lcd_write_string("o",1);
+				}
+				cnt++;
+			}
+			if (ADC_Value1 > 700) {cstate = BR;}
+			else if (ADC_Value2 < 250) {cstate = BR;}
+			else if (ADC_Value2 > 700) {cstate = MR;}
+			else if (ADC_Value1 < 300) {cstate = BM;}
+			else {cstate = BR;}
 		break;
 		default:
-			state = start;
-		break;
+			cstate = start;
+			break;
 	}	
-	switch(state) { // State Actions
+	switch(cstate) { // State Actions
 		case TL:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(13, 7);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		case TM:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(40, 7);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		case TR:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(67, 7);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		case ML:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(13, 24);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		case MM:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(40, 24);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		case MR:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(67, 24);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		case BL:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(13, 41);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		case BM:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(40, 41);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		case BR:
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(0, 10);
-			nokia_lcd_write_string("--------------",1);
-			nokia_lcd_set_cursor(0, 27);
-			nokia_lcd_write_string("--------------",1);
+			nokia_lcd_clear_cursors();
 			nokia_lcd_set_cursor(67, 41);
 			nokia_lcd_write_string("-",1);
 			nokia_lcd_render();
-		break;
+			break;
 		default:
-		break;
+			break;
 	}
 }
 
@@ -238,29 +294,26 @@ int main(void)
 	DDRC = 0xFF; PORTC = 0x00;
 	DDRD = 0xFF; PORTD = 0x00;
 	
-	// Grid
-	nokia_lcd_set_cursor(0, 10);
-	nokia_lcd_write_string("--------------",1);
-	nokia_lcd_set_cursor(0, 27);
-	nokia_lcd_write_string("--------------",1);
-	
 	char buffer[40];
 	
-	nokia_lcd_init();
+	nokia_lcd_init();  // Initialize Nokia 5110
 	nokia_lcd_clear();
+	
+	nokia_lcd_grid();  // Initialize Tic-Tac-Toe Grid
+	nokia_lcd_render();
+	
 	ADC_init();        // Initialize ADC
 	LCD_init();        // Initialize LCD 
 	LCD_ClearScreen();
-	nokia_lcd_render();
+	
 	TimerSet(100);
 	TimerOn();
 
 	while(1){
 		Cursor();
-		
-		/*sprintf(buffer, "X=%d   Y=%d ", ADC_Value1, ADC_Value2);
+		sprintf(buffer, "Score: ");
 		LCD_DisplayString(1, buffer);
-		LCD_Cursor(24);*/
+		//LCD_Cursor(24);
 		while (!TimerFlag) {};    // Wait 300ms
 		TimerFlag = 0;
 	}
