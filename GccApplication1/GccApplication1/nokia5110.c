@@ -189,11 +189,23 @@ void nokia_lcd_render(void)
 }
 
 void nokia_lcd_grid(void) {
-	nokia_lcd_set_cursor(0, 10);
-	nokia_lcd_write_string("--------------",1);
+	unsigned char i;	
+
+	for (i = 10; i <= 27; i = i + 17) { // X-Axis
+    	nokia_lcd_set_cursor(0, i);
+    	nokia_lcd_write_string("--------------",1);
+	}
 	
-	nokia_lcd_set_cursor(0, 27);
-	nokia_lcd_write_string("--------------",1);
+
+	for (i = 0; i <= 40; i = i + 5) {  // Y-Axis 1
+    	nokia_lcd_set_cursor(27, i);
+    	nokia_lcd_write_string("|",1);
+	}
+
+	for (i = 0; i <= 40; i = i + 5) {  // Y-Axis 2
+    	nokia_lcd_set_cursor(54, i);
+    	nokia_lcd_write_string("|",1);
+	}
 }
 
 void nokia_lcd_clear_cursors(void)
@@ -223,12 +235,12 @@ void nokia_lcd_clear_cursors(void)
 }
 
 void nokia_lcd_1win(void) {
-			nokia_lcd_clear();
-			nokia_lcd_set_cursor(35, 0);
-			nokia_lcd_write_string("P1", 3);
-			nokia_lcd_set_cursor(0, 20);
-			nokia_lcd_write_string("Wins!", 3);
-			nokia_lcd_render();
+		nokia_lcd_clear();
+		nokia_lcd_set_cursor(35, 0);
+		nokia_lcd_write_string("P1", 3);
+		nokia_lcd_set_cursor(0, 20);
+		nokia_lcd_write_string("Wins!", 3);
+		nokia_lcd_render();
 }
 
 void nokia_lcd_2win(void) {
@@ -237,5 +249,12 @@ void nokia_lcd_2win(void) {
 	nokia_lcd_write_string("P2", 3);
 	nokia_lcd_set_cursor(0, 20);
 	nokia_lcd_write_string("Wins!", 3);
+	nokia_lcd_render();
+}
+
+void nokia_lcd_display_cursor(uint8_t x, uint8_t y) {
+	nokia_lcd_clear_cursors();
+	nokia_lcd_set_cursor(x, y);
+	nokia_lcd_write_string("-",1);
 	nokia_lcd_render();
 }

@@ -77,6 +77,12 @@ void nokia_lcd_render(void);
  */
 void nokia_lcd_grid(void);
 
+
+/*
+ * Display cursor
+ */
+void nokia_lcd_display_cursor(uint8_t x, uint8_t y);
+
 /*
  * Clear cursors
  */

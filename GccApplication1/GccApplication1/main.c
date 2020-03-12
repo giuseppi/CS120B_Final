@@ -55,14 +55,45 @@ int ADC_Read(char channel)
 }
 
 enum Cursor_States{start, TL, TM, TR, ML, MM, MR, BL, BM, BR} cstate;
-unsigned char cnt, tl, tm, tr, ml, mm, mr, bl, bm, br, win, p1_wins, p2_wins = 0;
+unsigned char cnt, tl, tm, tr, ml, mm, mr, bl, bm, br, win, p1_wins, p2_wins;
+
+void reset_variables(void) {
+	cnt = 0;
+	tl = 0;
+	tm = 0;
+	tr = 0;
+	ml = 0;
+	mm = 0;
+	mr = 0;
+	bl = 0;
+	bm = 0;
+	br = 0;
+}
+
+void check_win(void) {
+	if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+	   ((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
+    	nokia_lcd_1win();
+    	p1_wins = p1_wins + 1;
+    	win = 1;
+    	reset_variables();
+	}
+	else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
+	        (tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
+    	nokia_lcd_2win();
+    	p2_wins = p2_wins + 1;
+    	win = 1;
+    	reset_variables();
+	}
+}
 
 void Cursor() {
-	int ADC_Value1;
-	int ADC_Value2;
-	unsigned press = ~PINA & 0x04;
-	ADC_Value1 = ADC_Read(0);/* Read the status on X-OUT pin using channel 0 */
-	ADC_Value2 = ADC_Read(1);/* Read the status on Y-OUT pin using channel 0 */
+	int ADC_Value1, ADC_Value2;
+	unsigned press;
+
+	press = ~PINA & 0x04; // Press down joystick
+	ADC_Value1 = ADC_Read(0); // Read the status on X-OUT pin using channel 0
+	ADC_Value2 = ADC_Read(1); // Read the status on Y-OUT pin using channel 0
 	
 	switch(cstate) { // Transition Actions
 		case start:
@@ -245,219 +276,57 @@ void Cursor() {
 	}	
 	switch(cstate) { // State Actions
 		case TL:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			     ((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-				nokia_lcd_1win();
-				p1_wins = p1_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			        (tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-				nokia_lcd_2win();
-				p2_wins = p2_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(13, 7);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(13, 7);
 			}
 			break;
 		case TM:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-    			nokia_lcd_1win();
-				p1_wins = p1_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-    			nokia_lcd_2win();
-				p2_wins = p2_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(40, 7);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(40, 7);
 			}
 			break;
 		case TR:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-    			nokia_lcd_1win();
-				p1_wins = p1_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-    			nokia_lcd_2win();
-				p2_wins = p2_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(67, 7);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(67, 7);
 			}
 			break;
 		case ML:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-    			nokia_lcd_1win();
-				p1_wins = p1_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-    			nokia_lcd_2win();
-				p2_wins = p2_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(13, 24);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(13, 24);
 			}
 			break;
 		case MM:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-    			nokia_lcd_1win();
-				p1_wins = p1_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-    			nokia_lcd_2win();
-				p2_wins = p2_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(40, 24);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(40, 24);
 			}
 			break;
 		case MR:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-    			nokia_lcd_1win();
-				p1_wins = p1_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-    			nokia_lcd_2win();
-				p2_wins = p2_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(67, 24);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(67, 24);
 			}
 			break;
 		case BL:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-    			nokia_lcd_1win();
-				p1_wins = p1_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-    			nokia_lcd_2win();
-				p2_wins = p2_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(13, 41);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(13, 41);
 			}
 			break;
 		case BM:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-    			nokia_lcd_1win();
-    			p1_wins = p1_wins + 1;
-    			win = 1;
-    			
-    			cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-    			nokia_lcd_2win();
-    			p2_wins = p2_wins + 1;
-    			win = 1;
-    			
-    			cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(40, 41);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(40, 41);
 			}
 			break;
 		case BR:
-			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
-			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
-    			nokia_lcd_1win();
-				p1_wins = p1_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
-			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
-    			nokia_lcd_2win();
-				p2_wins = p2_wins + 1;
-				win = 1;
-				
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
-			}
-			else {
-				nokia_lcd_clear_cursors();
-				nokia_lcd_set_cursor(67, 41);
-				nokia_lcd_write_string("-",1);
-				nokia_lcd_render();
+			check_win();
+			if (win != 1) {
+				nokia_lcd_display_cursor(67, 41);
 			}
 			break;
 		default:
@@ -487,12 +356,21 @@ int main(void)
 
 	TimerSet(100);
 	TimerOn();
+	
+	win = 0;
+	p1_wins = 0;
+	p2_wins = 0;
 
 	while(1){
 		Cursor();
 		sprintf(buffer, "Player 1: %d     Player 2: %d     ", p1_wins,p2_wins);
 		LCD_DisplayString(1, buffer);
 
+		if (win && press) {
+			cstate = start;
+			win = 0;
+		}
+		
 		while (!TimerFlag) {};    // Wait 300ms
 		TimerFlag = 0;
 	}
