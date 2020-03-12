@@ -1,5 +1,6 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/eeprom.h>
 #include <util/delay.h>
 #include "nokia5110.h"
 #include <stdio.h>
@@ -74,6 +75,7 @@ void check_win(void) {
 	   ((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     	nokia_lcd_1win();
     	p1_wins = p1_wins + 1;
+		eeprom_write_word((uint16_t*) 0, p1_wins);
     	win = 1;
     	reset_variables();
 		return;
@@ -82,6 +84,7 @@ void check_win(void) {
 	        (tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     	nokia_lcd_2win();
     	p2_wins = p2_wins + 1;
+		eeprom_write_word((uint16_t*) 1, p2_wins);
     	win = 1;
     	reset_variables();
 		return;
@@ -344,7 +347,8 @@ int main(void)
 	
 	char buffer[40];
 	unsigned press = ~PINA & 0x04;
-	
+	unsigned button = ~PINA & 0x08;
+
 	nokia_lcd_init();  // Initialize Nokia 5110
 	nokia_lcd_clear();
 
@@ -359,18 +363,45 @@ int main(void)
 	TimerOn();
 	
 	win = 0;
-	p1_wins = 0;
-	p2_wins = 0;
+	p1_wins = eeprom_read_word((uint16_t*) 0);
+	p2_wins = eeprom_read_word((uint16_t*) 1);
 
 	while(1){
 		Cursor();
-
 		if (win) {win = 0; cstate = start;}
+
+		if (p1_wins == 4) {
+			eeprom_write_word((uint16_t*) 0, 0);
+			eeprom_write_word((uint16_t*) 1, 0);
+			p1_wins = 0;
+			p2_wins = 0;
+			sprintf(buffer, "Player 1 wins   the series!", p1_wins,p2_wins);
+			LCD_DisplayString(1, buffer);
+			_delay_ms(30000);
+		}
+
+		else if (p2_wins == 4) {
+    		eeprom_write_word((uint16_t*) 0, 0);
+    		eeprom_write_word((uint16_t*) 1, 0);
+    		p1_wins = 0;
+    		p2_wins = 0;
+    		sprintf(buffer, "Player 2 wins   the series!", p1_wins,p2_wins);
+    		LCD_DisplayString(1, buffer);
+    		_delay_ms(30000);
+		}
 
 		sprintf(buffer, "Player 1: %d     Player 2: %d     ", p1_wins,p2_wins);
 		LCD_DisplayString(1, buffer);
-		/*while (!TimerFlag) {};    // Wait 300ms
-		TimerFlag = 0; */
+
+		if (button) {
+    		eeprom_write_word((uint16_t*) 0, 0);
+    		eeprom_write_word((uint16_t*) 1, 0);
+    		p1_wins = 0;
+    		p2_wins = 0;
+		}
+
+		while (!TimerFlag) {};    // Wait 300ms
+		TimerFlag = 0;
 	}
 	return 1;
 }
