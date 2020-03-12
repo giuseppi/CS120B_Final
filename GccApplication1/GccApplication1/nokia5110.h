@@ -82,4 +82,14 @@ void nokia_lcd_grid(void);
  */
 void nokia_lcd_clear_cursors(void);
 
+/*
+ * Player 1 Wins Display
+ */
+void nokia_lcd_1win(void);
+
+/*
+ * Player 2 Wins Display
+ */
+void nokia_lcd_2win(void);
+
 #endif

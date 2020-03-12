@@ -5,7 +5,6 @@
 #include <util/delay.h>
 #include "nokia5110_chars.h"
 
-
 static struct {
     /* screen byte massive */
     uint8_t screen[504];
@@ -220,5 +219,23 @@ void nokia_lcd_clear_cursors(void)
 	nokia_lcd_set_cursor(67, 41);
 	nokia_lcd_write_string(" ", 1);
 	
+	nokia_lcd_render();
+}
+
+void nokia_lcd_1win(void) {
+			nokia_lcd_clear();
+			nokia_lcd_set_cursor(35, 0);
+			nokia_lcd_write_string("P1", 3);
+			nokia_lcd_set_cursor(0, 20);
+			nokia_lcd_write_string("Wins!", 3);
+			nokia_lcd_render();
+}
+
+void nokia_lcd_2win(void) {
+	nokia_lcd_clear();
+	nokia_lcd_set_cursor(35, 0);
+	nokia_lcd_write_string("P2", 3);
+	nokia_lcd_set_cursor(0, 20);
+	nokia_lcd_write_string("Wins!", 3);
 	nokia_lcd_render();
 }
