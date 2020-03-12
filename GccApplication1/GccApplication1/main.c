@@ -1,15 +1,10 @@
 #define F_CPU 8000000UL
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/eeprom.h>	
 #include <util/delay.h>
 #include "nokia5110.h"
 #include <stdio.h>
 #include "dht.h"
-
-unsigned char EEMEM eeprom_array[10];
-// [1] = player 1 wins
-// [2] = player 2 wins
 
 volatile unsigned char TimerFlag = 0;
 unsigned long _avr_timer_M = 1;
@@ -250,20 +245,20 @@ void Cursor() {
 	}	
 	switch(cstate) { // State Actions
 		case TL:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			     (tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			     ((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
 				nokia_lcd_1win();
-				p1_wins++;
+				p1_wins = p1_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			        (tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
 				nokia_lcd_2win();
-				p2_wins++;
+				p2_wins = p2_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
@@ -274,20 +269,20 @@ void Cursor() {
 			}
 			break;
 		case TM:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			(tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     			nokia_lcd_1win();
-				p1_wins++;
+				p1_wins = p1_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     			nokia_lcd_2win();
-				p2_wins++;
+				p2_wins = p2_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
@@ -298,20 +293,20 @@ void Cursor() {
 			}
 			break;
 		case TR:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			(tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     			nokia_lcd_1win();
-				p1_wins++;
+				p1_wins = p1_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     			nokia_lcd_2win();
-				p2_wins++;
+				p2_wins = p2_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
@@ -322,20 +317,20 @@ void Cursor() {
 			}
 			break;
 		case ML:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			(tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     			nokia_lcd_1win();
-				p1_wins++;
+				p1_wins = p1_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     			nokia_lcd_2win();
-				p2_wins++;
+				p2_wins = p2_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
@@ -346,20 +341,20 @@ void Cursor() {
 			}
 			break;
 		case MM:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			(tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     			nokia_lcd_1win();
-				p1_wins++;
+				p1_wins = p1_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     			nokia_lcd_2win();
-				p2_wins++;
+				p2_wins = p2_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
@@ -370,20 +365,20 @@ void Cursor() {
 			}
 			break;
 		case MR:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			(tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     			nokia_lcd_1win();
-				p1_wins++;
+				p1_wins = p1_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     			nokia_lcd_2win();
-				p2_wins++;
+				p2_wins = p2_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
@@ -394,20 +389,20 @@ void Cursor() {
 			}
 			break;
 		case BL:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			(tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     			nokia_lcd_1win();
-				p1_wins++;
+				p1_wins = p1_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     			nokia_lcd_2win();
-				p2_wins++;
+				p2_wins = p2_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
@@ -418,21 +413,21 @@ void Cursor() {
 			}
 			break;
 		case BM:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			(tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     			nokia_lcd_1win();
-				p1_wins++;
-				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
+    			p1_wins = p1_wins + 1;
+    			win = 1;
+    			
+    			cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     			nokia_lcd_2win();
-				p2_wins++;
-				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
-				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
+    			p2_wins = p2_wins + 1;
+    			win = 1;
+    			
+    			cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
 				nokia_lcd_clear_cursors();
@@ -442,20 +437,20 @@ void Cursor() {
 			}
 			break;
 		case BR:
-			if ( (tl == 1 && tm == 1 && tr == 1) || (ml == 1 && mm == 1 && mr == 1) || (bl == 1 && bm == 1 && br == 1) || (tl == 1 && ml == 1 && bl == 1) ||
-			(tm == 1 && mm == 1 && bm == 1) || (tr == 1 && mr == 1 && br == 1) || (tl == 1 && mm == 1 && br == 1) || (tr == 1 && mm == 1 && bl == 1) ) {
+			if ( ((tl == 1) && (tm == 1) && (tr == 1)) || ((ml == 1) && (mm == 1) && (mr == 1)) || ((bl == 1) && (bm == 1) && (br == 1)) || ((tl == 1) && (ml == 1) && (bl == 1)) ||
+			((tm == 1) && (mm == 1) && (bm == 1)) || ((tr == 1) && (mr == 1) && (br == 1)) || ((tl == 1) && (mm == 1) && (br == 1)) || ((tr == 1) && (mm == 1) && (bl == 1)) ) {
     			nokia_lcd_1win();
-				p1_wins++;
+				p1_wins = p1_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[1], p1_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else if ( (tl == 2 && tm == 2 && tr == 2) || (ml == 2 && mm == 2 && mr == 2) || (bl == 2 && bm == 2 && br == 2) || (tl == 2 && ml == 2 && bl == 2) ||
 			(tm == 2 && mm == 2 && bm == 2) || (tr == 2 && mr == 2 && br == 2) || (tl == 2 && mm == 2 && br == 2) || (tr == 2 && mm == 2 && bl == 2) ) {
     			nokia_lcd_2win();
-				p2_wins++;
+				p2_wins = p2_wins + 1;
 				win = 1;
-				eeprom_write_word(&eeprom_array[2], p2_wins);
+				
 				cnt, tl, tm, tr, ml, mm, mr, bl, bm, br = 0;
 			}
 			else {
@@ -472,7 +467,7 @@ void Cursor() {
 
 int main(void)
 {
-	DDRA = 0x00; PORTA = 0x15;
+	DDRA = 0x00; PORTA = 0xFF;
 	DDRB = 0xFF; PORTB = 0x00;
 	DDRC = 0xFF; PORTC = 0x00;
 	DDRD = 0xFF; PORTD = 0x00;
@@ -495,18 +490,11 @@ int main(void)
 
 	while(1){
 		Cursor();
-		
 		sprintf(buffer, "Player 1: %d     Player 2: %d     ", p1_wins,p2_wins);
 		LCD_DisplayString(1, buffer);
 
 		while (!TimerFlag) {};    // Wait 300ms
 		TimerFlag = 0;
-		/*
-		if (win) {
-			elapsedTime += timerPeriod;
-		}
-		*/
 	}
-
 	return 1;
 }
