@@ -104,7 +104,7 @@ void Cursor() {
 			cstate = TL;
 			break;
 		case TL:
-			if (press) {
+			if (press && !tl) {
 				nokia_lcd_set_cursor(13, 0);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -123,7 +123,7 @@ void Cursor() {
 			else {cstate = TL;}
 			break;
 		case TM:
-			if (press) {
+			if (press && !tm) {
 				nokia_lcd_set_cursor(40, 0);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -142,7 +142,7 @@ void Cursor() {
 			else {cstate = TM;}
 			break;
 		case TR:
-			if (press) {
+			if (press && !tr) {
 				nokia_lcd_set_cursor(67, 0);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -161,7 +161,7 @@ void Cursor() {
 			else {cstate = TR;}
 			break;
 		case ML:
-			if (press) {
+			if (press && !ml) {
 				nokia_lcd_set_cursor(13, 17);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -180,7 +180,7 @@ void Cursor() {
 			else {cstate = ML;}
 			break;
 		case MM:
-			if (press) {
+			if (press && !mm) {
 				nokia_lcd_set_cursor(40, 17);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -199,7 +199,7 @@ void Cursor() {
 			else {cstate = MM;}
 			break;
 		case MR:
-			if (press) {
+			if (press && !mr) {
 				nokia_lcd_set_cursor(67, 17);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -218,7 +218,7 @@ void Cursor() {
 			else {cstate = MR;}
 			break;
 		case BL:
-			if (press) {
+			if (press && !bl) {
 				nokia_lcd_set_cursor(13, 34);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -237,7 +237,7 @@ void Cursor() {
 			else {cstate = BL;}
 			break;
 		case BM:
-			if (press) {
+			if (press && !bm) {
 				nokia_lcd_set_cursor(40, 34);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -256,7 +256,7 @@ void Cursor() {
 			else {cstate = BM;}
 			break;
 		case BR:
-			if (press) {
+			if (press && !br) {
 				nokia_lcd_set_cursor(67, 34);
 				if ((cnt % 2) == 0) {
 					nokia_lcd_write_string("x",1);
@@ -346,8 +346,6 @@ int main(void)
 	DDRD = 0xFF; PORTD = 0x00;
 	
 	char buffer[40];
-	unsigned press = ~PINA & 0x04;
-	unsigned button = ~PINA & 0x08;
 
 	nokia_lcd_init();  // Initialize Nokia 5110
 	nokia_lcd_clear();
@@ -392,12 +390,12 @@ int main(void)
 
 		sprintf(buffer, "Player 1: %d     Player 2: %d     ", p1_wins,p2_wins);
 		LCD_DisplayString(1, buffer);
-
-		if (button) {
-    		eeprom_write_word((uint16_t*) 0, 0);
-    		eeprom_write_word((uint16_t*) 1, 0);
-    		p1_wins = 0;
-    		p2_wins = 0;
+		
+		if (cnt % 2 == 0) {
+			LCD_Cursor(14);
+		}
+		else if (cnt % 2 == 1) {
+			LCD_Cursor(30);
 		}
 
 		while (!TimerFlag) {};    // Wait 300ms
