@@ -98,4 +98,10 @@ void nokia_lcd_1win(void);
  */
 void nokia_lcd_2win(void);
 
+
+/*
+ * Tie Display
+ */
+void nokia_lcd_tie(void);
+
 #endif

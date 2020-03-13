@@ -55,7 +55,7 @@ int ADC_Read(char channel)
 }
 
 enum Cursor_States{start, TL, TM, TR, ML, MM, MR, BL, BM, BR} cstate;
-unsigned char cnt, tl, tm, tr, ml, mm, mr, bl, bm, br, win, p1_wins, p2_wins;
+unsigned char cnt, tl, tm, tr, ml, mm, mr, bl, bm, br, win, p1_wins, p2_wins, tie;
 
 void reset_variables(void) {
 	cnt = 0;
@@ -89,6 +89,19 @@ void check_win(void) {
     	reset_variables();
 		return;
 	}
+}
+
+void check_tie(void) {
+		if (cnt == 9) {
+			nokia_lcd_tie();
+			p1_wins = p1_wins + 1;
+			eeprom_write_word((uint16_t*) 0, p1_wins);
+			p2_wins = p2_wins + 1;
+			eeprom_write_word((uint16_t*) 1, p2_wins);
+			tie = 1;
+			reset_variables();
+			return;
+		}
 }
 
 void Cursor() {
@@ -282,55 +295,82 @@ void Cursor() {
 		case TL:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(13, 7);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(13, 7);
+				}
 			}
 			break;
 		case TM:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(40, 7);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(40, 7);
+				}
 			}
 			break;
 		case TR:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(67, 7);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(67, 7);
+				}
 			}
 			break;
 		case ML:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(13, 24);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(13, 24);
+				}
 			}
 			break;
 		case MM:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(40, 24);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(40, 24);
+				}
 			}
 			break;
 		case MR:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(67, 24);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(67, 24);
+				}
 			}
 			break;
 		case BL:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(13, 41);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(13, 41);
+				}
 			}
 			break;
 		case BM:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(40, 41);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(40, 41);
+				}
 			}
 			break;
 		case BR:
 			check_win();
 			if (win != 1) {
-				nokia_lcd_display_cursor(67, 41);
+				check_tie();
+				if (tie != 1) {
+					nokia_lcd_display_cursor(67, 41);
+				}
 			}
 			break;
 		default:
@@ -367,8 +407,9 @@ int main(void)
 	while(1){
 		Cursor();
 		if (win) {win = 0; cstate = start;}
-
-		if (p1_wins == 4) {
+		else if (tie) {tie = 0; cstate = start;}
+			
+		if (p1_wins == 3) {
 			eeprom_write_word((uint16_t*) 0, 0);
 			eeprom_write_word((uint16_t*) 1, 0);
 			p1_wins = 0;
@@ -378,7 +419,7 @@ int main(void)
 			_delay_ms(30000);
 		}
 
-		else if (p2_wins == 4) {
+		else if (p2_wins == 3) {
     		eeprom_write_word((uint16_t*) 0, 0);
     		eeprom_write_word((uint16_t*) 1, 0);
     		p1_wins = 0;

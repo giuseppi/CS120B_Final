@@ -270,3 +270,16 @@ void nokia_lcd_display_cursor(uint8_t x, uint8_t y) {
 	nokia_lcd_render();
 	return;
 }
+
+void nokia_lcd_tie(void) {
+		nokia_lcd_clear();
+		nokia_lcd_set_cursor(13, 10);
+		nokia_lcd_write_string("Tie!", 3);
+		nokia_lcd_render();
+		
+		delay_ms(3000);
+		nokia_lcd_clear();
+		nokia_lcd_grid();
+
+		return;
+}
